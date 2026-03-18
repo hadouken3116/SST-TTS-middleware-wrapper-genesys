@@ -1,0 +1,82 @@
+{
+  "name": "Genesys Azure Gateway",
+  "integrationType": "custom-rest-actions",
+  "actionType": "custom",
+  "config": {
+    "request": {
+      "requestUrlTemplate": "https://YOUR_FUNCTION_APP.azurewebsites.net/api/genesys",
+      "requestType": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "x-api-key": "${credentials.apiKey}"
+      },
+      "requestTemplate": "{ \"action\": \"$esc.jsonString(${input.ACTION})\", \"params\": { \"param1\": \"$!{input.PARAM1}\", \"param2\": \"$!{input.PARAM2}\", \"param3\": \"$!{input.PARAM3}\" } }"
+    },
+    "response": {
+      "translationMap": {
+        "successVal": "$.success",
+        "actionVal": "$.action",
+        "resultVal": "$.result",
+        "errorVal": "$.errorMessage"
+      },
+      "translationMapDefaults": {
+        "successVal": "false",
+        "actionVal": "",
+        "resultVal": "",
+        "errorVal": "Unknown error"
+      },
+      "successTemplate": "{ \"success\": ${successVal}, \"action\": ${actionVal}, \"result\": ${resultVal}, \"errorMessage\": ${errorVal} }"
+    }
+  },
+  "contract": {
+    "input": {
+      "inputSchema": {
+        "title": "GenesysGatewayInput",
+        "type": "object",
+        "required": ["ACTION"],
+        "properties": {
+          "ACTION": {
+            "description": "The action to execute, e.g. GetCustomer, CheckBalance, BookAppointment, GetHours",
+            "type": "string"
+          },
+          "PARAM1": {
+            "description": "First parameter (e.g. customerId, phone)",
+            "type": "string"
+          },
+          "PARAM2": {
+            "description": "Second parameter (e.g. date)",
+            "type": "string"
+          },
+          "PARAM3": {
+            "description": "Third parameter (e.g. time, department)",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "output": {
+      "successSchema": {
+        "title": "GenesysGatewayOutput",
+        "type": "object",
+        "properties": {
+          "success": {
+            "description": "Whether the action succeeded",
+            "type": "boolean"
+          },
+          "action": {
+            "description": "Echo of the action name",
+            "type": "string"
+          },
+          "result": {
+            "description": "Human-readable result string for the bot to use",
+            "type": "string"
+          },
+          "errorMessage": {
+            "description": "Error details if success is false",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
