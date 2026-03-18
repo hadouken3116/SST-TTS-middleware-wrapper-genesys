@@ -5,7 +5,6 @@ on:
     branches: [main]
 
 env:
-  AZURE_FUNCTIONAPP_NAME: "your-genesys-gateway"
   NODE_VERSION: "20.x"
 
 jobs:
@@ -25,9 +24,12 @@ jobs:
           npm ci
           npm run build
 
+      - name: Test
+        run: npm test
+
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
         with:
-          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          app-name: ${{ secrets.AZURE_FUNCTIONAPP_NAME }}
           package: .
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}

@@ -5,7 +5,7 @@ import {
   InvocationContext,
 } from "@azure/functions";
 import { GenesysRequest } from "../types";
-import { getHandler, listActions } from "../handlers";
+import { getHandler } from "../handlers";
 import { successResponse, errorResponse } from "../utils/response";
 
 /**
@@ -26,9 +26,7 @@ async function genesysGateway(
   // --- API key validation (optional but recommended) ---
   const expectedKey = process.env.API_KEY;
   if (expectedKey) {
-    const providedKey =
-      request.headers.get("x-api-key") ??
-      request.query.get("code");
+    const providedKey = request.headers.get("x-api-key");
 
     if (providedKey !== expectedKey) {
       return jsonResponse(401, errorResponse("", "Unauthorized"));
@@ -51,10 +49,7 @@ async function genesysGateway(
   if (!action) {
     return jsonResponse(
       400,
-      errorResponse(
-        "",
-        `Missing 'action' field. Available actions: ${listActions().join(", ")}`
-      )
+      errorResponse("", "Missing 'action' field.")
     );
   }
 
@@ -65,10 +60,7 @@ async function genesysGateway(
     context.warn(`Unknown action requested: ${action}`);
     return jsonResponse(
       404,
-      errorResponse(
-        action,
-        `Unknown action '${action}'. Available: ${listActions().join(", ")}`
-      )
+      errorResponse(action, `Unknown action '${action}'.`)
     );
   }
 

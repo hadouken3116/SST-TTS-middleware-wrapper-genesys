@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { ActionHandler, HandlerResult } from "../types";
 
 /**
@@ -31,7 +32,7 @@ export const bookAppointment: ActionHandler = async (
   // ---------------------------------------------------
 
   const booking = {
-    confirmationId: `APT-${Date.now()}`,
+    confirmationId: `APT-${randomUUID()}`,
     customerId,
     date,
     time: time || "10:00 AM",
